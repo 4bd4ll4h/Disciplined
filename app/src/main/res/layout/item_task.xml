@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <RelativeLayout
+        android:id="@+id/item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/layout"
+        android:descendantFocusability="blocksDescendants"
+        android:padding="4dp">
+
+        <ImageView
+            android:id="@+id/TimeIcon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignTop="@+id/Rtimes"
+            android:layout_toStartOf="@+id/Rtimes"
+            android:src="@drawable/time"
+            android:tint="@color/grey_40" />
+
+        <TextView
+            android:id="@+id/Rtimes"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="8dp"
+            android:paddingEnd="3dp"
+            android:text="00:00"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="15sp" />
+
+
+        <TextView
+            android:id="@+id/Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/IMportent"
+            android:paddingStart="3dp"
+            android:text="Friday Quran"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/IMportent"
+            android:layout_width="10dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/icon_shap"
+            android:padding="2dp" />
+
+        <TextView
+            android:id="@+id/NoteDE"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/Title"
+            android:layout_alignStart="@+id/Title"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/IMportent"
+            android:text="just an example for testing dsafwerodsfkj asfljs;afjlsjlsa;jljsafjsljgjajgfj;gjfgjr;kjfffffffffffffffffffff"
+            android:textAlignment="viewStart"
+            android:textColor="@android:color/background_dark"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:id="@+id/preDit"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_below="@+id/NoteDE"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@id/IMportent">
+
+            <ImageView
+                android:id="@+id/Alert"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/alarm"
+                android:tint="@color/grey_700"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/noto"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@+id/AlarmDE"
+                android:src="@drawable/noto"
+                android:tint="@color/grey_700"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/repeat"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@+id/RemainderDE"
+                android:src="@drawable/repeat"
+                android:tint="@color/grey_700"
+                android:visibility="gone" />
+
+
+            <TextView
+                android:id="@+id/RepeatDE"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+
+                android:layout_alignTop="@+id/repeat"
+                android:layout_toEndOf="@+id/repeat"
+                android:text="Once"
+                android:textColor="@android:color/darker_gray"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/RemainderDE"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_alignTop="@+id/noto"
+                android:layout_toEndOf="@+id/noto"
+                android:text="3Remainders"
+                android:textColor="@android:color/darker_gray"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/AlarmDE"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/Alert"
+                android:layout_toEndOf="@+id/Alert"
+                android:text="2Alarm"
+                android:textColor="@android:color/darker_gray"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/preDit"
+            android:layout_marginTop="5dp"
+            android:background="@android:color/holo_red_dark"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:id="@+id/detaile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/divider2"
+            android:layout_marginTop="5dp"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/Edite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_toEndOf="@+id/Done"
+                android:background="@android:color/background_light"
+                android:drawableTop="@drawable/edit"
+                android:gravity="center"
+                android:text="@string/edite"
+                android:textColor="@android:color/background_dark"
+                android:tint="@color/grey_700" />
+
+            <Button
+                android:id="@+id/Done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:background="@android:color/background_light"
+                android:drawableTop="@drawable/done"
+                android:gravity="bottom|center"
+                android:text="@string/done"
+                android:textColor="@android:color/background_dark"
+                android:tint="@color/grey_700" />
+
+            <Button
+                android:id="@+id/Remove"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_toStartOf="@+id/Done"
+                android:background="@android:color/background_light"
+                android:drawableTop="@drawable/ic_delete_black_24dp"
+                android:gravity="center"
+                android:text="@string/remove"
+                android:textColor="@android:color/background_dark" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

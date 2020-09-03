@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:background="@drawable/layout"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/clock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="@android:color/background_dark"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="139dp"
+        android:text="TextView"
+        android:textColor="@android:color/background_dark"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/sub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/main"
+        android:layout_alignStart="@+id/main"
+        android:layout_centerVertical="true"
+        android:text="TextView"
+        android:textColor="@color/Gray" />
+    <Button
+        android:id="@+id/dismes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sub"
+        android:layout_alignParentStart="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/btn_rounded_accent"
+        android:textColor="@color/Red"
+        android:text="@string/dissmes" />
+
+    <Button
+        android:id="@+id/snoozeB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sub"
+        android:layout_alignParentEnd="true"
+        android:textColor="@color/grey_900"
+        android:background="@drawable/btn_rounded_accent"
+        android:layout_margin="20dp"
+        android:text="@string/snooze" />
+
+    <Button
+        android:id="@+id/DoneB"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sub"
+        android:background="@drawable/btn_rounded_accent"
+        android:layout_margin="20dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:text="@string/done" />
+</RelativeLayout>

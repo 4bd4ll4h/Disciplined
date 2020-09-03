@@ -1,0 +1,2 @@
+include ':app', ':record-view'
+rootProject.name='Disciplined'

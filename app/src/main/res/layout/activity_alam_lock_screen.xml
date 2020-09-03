@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ssound"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/layout"
+    android:theme="@style/Theme.NoActionBar"
+    tools:context=".alamLockScreen">
+
+
+    <TextView
+        android:id="@+id/clock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/main"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:gravity="clip_horizontal"
+        android:text="TextView"
+        android:textColor="@android:color/background_dark"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="TextView"
+        android:textColor="@android:color/background_dark"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/sub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/main"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="TextView"
+        android:textColor="@color/Gray"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/dismes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sub"
+        android:layout_alignParentStart="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/btn_rounded_accent"
+        android:textColor="@color/Red"
+        android:text="@string/dissmes" />
+
+    <Button
+        android:id="@+id/snoozeB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sub"
+        android:layout_alignParentEnd="true"
+        android:textColor="@color/grey_900"
+        android:background="@drawable/btn_rounded_accent"
+        android:layout_margin="20dp"
+        android:text="@string/snooze" />
+
+    <Button
+        android:id="@+id/DoneB"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sub"
+        android:background="@drawable/btn_rounded_accent"
+        android:layout_margin="20dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:text="@string/done" />
+
+</RelativeLayout>

@@ -1,0 +1,36 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.athefourth.sia.Task_of_the_day">
+
+    <item
+        android:id="@+id/New_task"
+        android:orderInCategory="100"
+        android:title="@string/go_to"
+        app:showAsAction="always" />
+    <group >
+        <item
+
+            android:enabled="false"
+            android:orderInCategory="0"
+
+            android:title="@string/order_by"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/ByDate"
+            android:orderInCategory="100"
+            android:title="@string/date"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/ByImportance"
+            android:orderInCategory="100"
+            android:title="@string/importance"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/ByTitle"
+            android:orderInCategory="100"
+            android:title="@string/title"
+            app:showAsAction="never" />
+    </group>
+
+</menu>

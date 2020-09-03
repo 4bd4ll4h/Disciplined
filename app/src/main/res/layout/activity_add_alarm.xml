@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_900"
+    android:orientation="vertical"
+    android:theme="@style/Theme"
+    tools:context=".addRemainders">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/save_alarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/btn_rounded_accent"
+            android:paddingLeft="@dimen/spacing_xlarge"
+            android:paddingRight="@dimen/spacing_xlarge"
+            android:text="@string/save"
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:textColor="@color/grey_900" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/alarm_title1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/save_alarm"
+            android:layout_toStartOf="@id/alarm_time"
+            android:textColorHint="@color/grey_40"
+
+            >
+
+
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/alarm_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/task_name"
+                android:textColor="@android:color/white"
+                android:theme="@style/Theme.AppCompat.Yellow" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/alarm_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/save_alarm"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="13dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:drawableStart="@drawable/time"
+            android:drawablePadding="3dp"
+            android:padding="3dp"
+            android:text="@string/_00_00"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/spacing_middle" />
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/txt_area_dark_yellow"
+        android:padding="@dimen/spacing_large"
+        android:textColorHint="@color/grey_40">
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/alarm_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:gravity="top"
+            android:hint="@string/more_detiles"
+            android:inputType="textMultiLine"
+            android:maxLines="6"
+            android:minLines="3"
+            android:textColor="@android:color/white"
+            android:theme="@style/Theme.AppCompat.Yellow" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/alamSitting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:drawablePadding="3dp"
+        android:padding="3dp"
+        android:text="@string/alramSittng"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+    <RelativeLayout
+        android:id="@+id/alaermSitting"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:theme="@style/Theme">
+
+        <TextView
+            android:id="@+id/alarmName1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/alarm_name"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/alarmName2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/alarmName1"
+            android:layout_alignParentStart="true"
+            android:clickable="true"
+            android:text="@string/none"
+            android:textColor="@android:color/holo_blue_light" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/goTosnooze"
+            android:layout_alignEnd="@+id/divider5"
+            android:layout_below="@+id/alarmName2"
+            android:layout_alignParentStart="true">
+        <TextView
+            android:id="@+id/snooze1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="5dp"
+            android:text="@string/snooze"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/snooze2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/snooze1"
+            android:layout_alignParentStart="true"
+            android:text="@string/none"
+            android:textColor="@android:color/holo_blue_light" />
+        </RelativeLayout>
+
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignBottom="@+id/goTosnooze"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="5dp" />
+
+        <View
+            android:id="@+id/divider5"
+            android:layout_width="1dp"
+            android:layout_height="40dp"
+            android:layout_alignBottom="@+id/goTosnooze"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="85dp"
+            android:foregroundGravity="fill_vertical" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/goTosnooze"
+
+            android:id="@+id/goTosound">
+        <TextView
+            android:id="@+id/sound1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/sound_and_volume"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/sound2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sound1"
+            android:text="@string/none"
+            android:textColor="@android:color/holo_blue_light" />
+        </RelativeLayout>
+
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/switch1"
+            android:layout_alignTop="@+id/alarmName1" />
+    </RelativeLayout>
+
+
+</LinearLayout>
