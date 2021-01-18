@@ -2,13 +2,8 @@ package com.example.disciplined;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
-import com.example.disciplined.db.db_tables.alarm_table;
-import com.example.disciplined.db.db_tables.remainders_table;
 import com.example.disciplined.db.db_tables.taskTable;
 
 import java.util.ArrayList;
@@ -19,10 +14,7 @@ import java.util.List;
 public class viewModle extends AndroidViewModel {
 
     private disciplined_repository repository;
-    LiveData<ArrayList<alarm_table>> alarm_liveData;
-    LiveData<ArrayList<remainders_table>> remainder_liveData;
-    LiveData<ArrayList<taskTable>> task_liveData;
-    MutableLiveData<List<insertTask>> allTask=new MutableLiveData<>();
+    List<insertTask> allTask=new ArrayList<>();
 
 
     public viewModle(@NonNull Application application) {
@@ -35,14 +27,11 @@ public class viewModle extends AndroidViewModel {
         repository.getTask(TaskId);
     }
 
-    public LiveData getAllTask(){
+    public List<insertTask> getAllTask(){
         return allTask;
     }
     public void setAllTask(Date date,String day,String order){
-
-
-        allTask.setValue(repository.getAllTask(date,day,order));
-
+        allTask=repository.getAllTask(date,day,order);
     }
 
     public void deleteTask(Long task) {

@@ -1,5 +1,6 @@
 package com.example.disciplined;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.PorterDuff;
@@ -21,8 +22,8 @@ import android.widget.TextView;
 import com.example.disciplined.db.db_tables.taskTable;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import static android.support.v4.content.ContextCompat.getColor;
@@ -30,7 +31,7 @@ import static android.support.v4.content.ContextCompat.getDrawable;
 
 
 public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder> {
-    private static DiffUtil.ItemCallback<insertTask> diffCallback = new DiffUtil.ItemCallback<insertTask>() {
+    private static final DiffUtil.ItemCallback<insertTask> diffCallback = new DiffUtil.ItemCallback<insertTask>() {
         @Override
         public boolean areItemsTheSame(insertTask oldItem, insertTask newItem) {
             return oldItem.getTask().getId().equals(newItem.getTask().getId());
@@ -49,11 +50,12 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
                     oldItem.getRemainders().size() == newItem.getRemainders().size();
         }
     };
-    private Context context;
-    private taskAdapterInterface taskFace;
-    private String theDay;
+    private final Context context;
+    private final taskAdapterInterface taskFace;
+    private final String theDay;
     private insertTask task1;
     private taskHolder taskHolder;
+    taskTable task;
 
     protected taskAdapter(Context context, taskAdapterInterface taskFace, String theDay) {
 
@@ -61,7 +63,7 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
         this.taskFace = taskFace;
         this.context = context;
         this.theDay = theDay;
-        Log.i("safsda2",getItemCount()+"i");
+        Log.i("safsda2", getItemCount() + "i");
     }
 
     @NonNull
@@ -74,26 +76,35 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
     }
 
     @Override
-    public void onBindViewHolder(@NonNull  taskHolder holder, int position) {
-        Log.i("safsdaf",getItemCount()+"i");
+    public void onBindViewHolder(@NonNull final taskHolder holder, @SuppressLint("RecyclerView") final int position) {
+        Log.i("safsdaf", getItemCount() + "i");
 
-        taskTable task = getItem(position).getTask();
-         task1=getItem(position);
-         taskHolder=holder;
+         task = getItem(position).getTask();
+        task1 = getItem(position);
+        taskHolder = holder;
         holder.title.setText(task.getTitle());
         holder.detail.setText(task.getDescription());
         holder.remainderText.setText(String.format("%d%s", getItem(position).getRemainders().size(), context.getString(R.string.Reminders)));
         holder.alarmText.setText(String.format("%d%s", getItem(position).getAlarms().size(), context.getString(R.string.Alarms)));
         holder.repeatText.setText(task.getRepeat());
-
+        if (holder.countDownTimer != null) {
+            holder.countDownTimer.cancel();
+        }
         float sec = SetCounter(task.getDate().getHours(), task.getDate().getMinutes());
-        if (task.getStatus()!=1&&sec > 0 && position == 0 && (new Date().getYear()==new Date(theDay).getYear()&&new Date().getMonth()==new Date(theDay).getMonth()&&
-                new Date().getDate()==new Date(theDay).getDate())) {
+        Log.i("safsd13", holder.getAdapterPosition() + ":"+getHolder().getAdapterPosition()+":"+position);
+
+        if (task.getStatus() != 1 && sec > 0 && holder.getAdapterPosition() == 0 &&
+                (new Date().getYear() == new Date(theDay).getYear() &&
+                        new Date().getMonth() == new Date(theDay).getMonth() &&
+                        new Date().getDate() == new Date(theDay).getDate())) {
+            Log.i("safsd13", getItemCount() + "in");
+
+            final taskTable finalMtask = task;
+
             final int[] CH = new int[1];
             final int[] Cm = new int[1];
             final int[] Csecand = new int[1];
-            final taskTable finalMtask = task;
-            CountDownTimer countDownTimer = new CountDownTimer((long) (sec * 1000), 900) {
+            holder.setCountDownTimer(new CountDownTimer((long) (sec * 1000), 900) {
                 @Override
                 public void onTick(long millisUntilFinished) {
                     millisUntilFinished = millisUntilFinished / 1000;
@@ -101,6 +112,7 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
                     Cm[0] = (int) (millisUntilFinished % (60 * 60)) / (60);
                     Csecand[0] = (int) (millisUntilFinished % (60 * 60)) - (Cm[0] * 60);
                     getHolder().time.setText(CH[0] + ":" + Cm[0] + ":" + Csecand[0]);
+                    Log.i("tag13",position+" : "+holder.title.getText());
                 }
 
                 @Override
@@ -108,22 +120,26 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
                     getHolder().item.setAlpha(0.5f);
                     getHolder().time.setText(R.string.time_is_up);
                     taskFace.onFinsh();
+
                 }
-            };
-            countDownTimer.start();
-        } else {
-            Date date1=new Date();
-            Date date2=new Date(theDay);
-            String d1="",d2="";
-            d1= String.valueOf(date1.getYear());
-            d2= String.valueOf(date2.getYear());
-            d1+= String.valueOf(date1.getMonth());
-            d2+= String.valueOf(date2.getMonth());
-            d1+= String.valueOf(date1.getDate());
-            d2+= String.valueOf(date2.getDate());
-            Log.i("theDay2",d1+" : "+d2);
-            if (task.getStatus()!=1&& (Integer.valueOf(d1)>Integer.valueOf(d2)||(d1.equals(d2) &&sec<0)))
-            {holder.item.setAlpha(0.5f);
+
+
+            });
+            holder.countDownTimer.start();
+        }
+        else {
+            Date date1 = new Date();
+            Date date2 = new Date(theDay);
+            String d1 = "", d2 = "";
+            d1 = String.valueOf(date1.getYear());
+            d2 = String.valueOf(date2.getYear());
+            d1 += String.valueOf(date1.getMonth());
+            d2 += String.valueOf(date2.getMonth());
+            d1 += String.valueOf(date1.getDate());
+            d2 += String.valueOf(date2.getDate());
+            Log.i("theDay2", d1 + " : " + d2);
+            if (task.getStatus() != 1 && (Integer.valueOf(d1) > Integer.valueOf(d2) || (d1.equals(d2) && sec < 0))) {
+                holder.item.setAlpha(0.5f);
                 holder.time.setText(R.string.time_is_up);
 
             } else {
@@ -139,7 +155,7 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
             case 9:
             case 10:
                 holder.time.setTextColor(getColor(context, R.color.Red));
-                holder.importantcIcon.setBackground(getDrawable(context,R.drawable.icon_shap));
+                holder.importantcIcon.setBackground(getDrawable(context, R.drawable.icon_shap));
                 holder.timeIcon.setColorFilter(getColor(context, R.color.Red), PorterDuff.Mode.SRC_IN);
                 holder.repeatIcon.setColorFilter(getColor(context, R.color.Red), PorterDuff.Mode.SRC_IN);
                 holder.alarmIcon.setColorFilter(getColor(context, R.color.Red), PorterDuff.Mode.SRC_IN);
@@ -150,7 +166,7 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
             case 6:
             case 7:
                 holder.time.setTextColor(getColor(context, R.color.redEsay));
-                holder.importantcIcon.setBackground(getDrawable(context,R.drawable.icon_shape_red_esy));
+                holder.importantcIcon.setBackground(getDrawable(context, R.drawable.icon_shape_red_esy));
                 holder.timeIcon.setColorFilter(getColor(context, R.color.redEsay), PorterDuff.Mode.SRC_IN);
                 holder.repeatIcon.setColorFilter(getColor(context, R.color.redEsay), PorterDuff.Mode.SRC_IN);
                 holder.alarmIcon.setColorFilter(getColor(context, R.color.redEsay), PorterDuff.Mode.SRC_IN);
@@ -161,7 +177,7 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
             case 3:
             case 4:
                 holder.time.setTextColor(getColor(context, R.color.grn));
-                holder.importantcIcon.setBackground(getDrawable(context,R.drawable.ic_shap_esy));
+                holder.importantcIcon.setBackground(getDrawable(context, R.drawable.ic_shap_esy));
                 holder.timeIcon.setColorFilter(getColor(context, R.color.grn), PorterDuff.Mode.SRC_IN);
                 holder.repeatIcon.setColorFilter(getColor(context, R.color.grn), PorterDuff.Mode.SRC_IN);
                 holder.alarmIcon.setColorFilter(getColor(context, R.color.grn), PorterDuff.Mode.SRC_IN);
@@ -170,7 +186,7 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
                 break;
             default:
                 holder.time.setTextColor(getColor(context, R.color.Gray));
-                holder.importantcIcon.setBackground(getDrawable(context,R.drawable.ic_chap_none));
+                holder.importantcIcon.setBackground(getDrawable(context, R.drawable.ic_chap_none));
                 holder.timeIcon.setColorFilter(getColor(context, R.color.Gray), PorterDuff.Mode.SRC_IN);
                 holder.repeatIcon.setColorFilter(getColor(context, R.color.Gray), PorterDuff.Mode.SRC_IN);
                 holder.alarmIcon.setColorFilter(getColor(context, R.color.Gray), PorterDuff.Mode.SRC_IN);
@@ -180,7 +196,7 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
 
 
         }
-        if(task.getStatus()==1){
+        if (task.getStatus() == 1) {
 
             holder.doneB.setDrawingCacheBackgroundColor(getColor(context, R.color.colorPrimary));
             holder.time.setTextColor(getColor(context, R.color.colorPrimary));
@@ -202,49 +218,8 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
         }
 
 
-        holder.removeB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                AlertDialog.Builder builder=new AlertDialog.Builder(context);
-
-                builder.setTitle(R.string.Confirm);
-                builder.setMessage(R.string.deletTask);
-                builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                     taskFace.onClikRemaove(getItem());
-
-                    }
-                });
-                builder.setNegativeButton(context.getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-                AlertDialog alertDialog=builder.create();
-                alertDialog.show();
-            }
-        });
-
-
-
-        holder.doneB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               taskFace.onClikDone(getItem(),getHolder());
-            }
-        });
-        holder.editeB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               taskFace.onClikEdite(getItem());
-
-            }
-        });
-
-
-
     }
+
 
     private taskHolder getHolder() {
         return taskHolder;
@@ -270,6 +245,7 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
         TextView alarmText;
         TextView repeatText;
         TextView detail;
+        CountDownTimer countDownTimer;
 
         public taskHolder(final View view) {
             super(view);
@@ -292,9 +268,60 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    taskFace.onClik(v,getAdapterPosition());
+                    taskFace.onClik(v, getAdapterPosition());
                 }
             });
+            editeB.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    taskFace.onClikEdite(getAdapterPosition());
+
+                }
+            });
+            removeB.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                    builder.setTitle(R.string.Confirm);
+                    builder.setMessage(R.string.deletTask);
+                    builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            taskFace.onClikRemaove(getAdapterPosition());
+
+                        }
+                    });
+                    builder.setNegativeButton(context.getString(R.string.no), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+                }
+            });
+
+
+            doneB.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    taskFace.onClikDone(getAdapterPosition(), taskAdapter.taskHolder.this);
+                }
+            });
+
+
+        }
+
+        public CountDownTimer getCountDownTimer() {
+            return countDownTimer;
+        }
+
+        public void setCountDownTimer(CountDownTimer countDownTimer) {
+            if (this.countDownTimer != null) this.countDownTimer.cancel();
+            this.countDownTimer = null;
+            this.countDownTimer = countDownTimer;
+
         }
     }
 
@@ -316,15 +343,24 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
         return sec;
     }
 
+    @Override
+    public void submitList(List<insertTask> list) {
+        if(taskHolder!=null&&taskHolder.countDownTimer!=null){
+            taskHolder.countDownTimer.cancel();
+            taskHolder.time.setText(NewTask.changeTimeFormat(task.getDate().getHours(), task.getDate().getMinutes(), context)); }
+        super.submitList(list);
+        this.notifyDataSetChanged();
+    }
+
     interface taskAdapterInterface {
-        public void onClik(View v,int position);
+        void onClik(View v, int position);
 
-        public void onFinsh();
+        void onFinsh();
 
-        void onClikRemaove(insertTask task);
+        void onClikRemaove(int task);
 
-        void onClikDone(insertTask task, taskHolder holder);
+        void onClikDone(int task, taskHolder holder);
 
-        void onClikEdite(insertTask task);
+        void onClikEdite(int task);
     }
 }

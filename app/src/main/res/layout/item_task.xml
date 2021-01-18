@@ -47,6 +47,8 @@
             android:layout_alignParentTop="true"
             android:layout_marginStart="3dp"
             android:layout_marginTop="5dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:layout_toEndOf="@+id/IMportent"
             android:paddingStart="3dp"
             android:text="Friday Quran"

@@ -1,6 +1,5 @@
 package com.example.disciplined;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +7,6 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,14 +20,12 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 import static android.support.v4.content.ContextCompat.getColor;
-import static android.support.v4.content.ContextCompat.getDrawable;
 import static com.example.disciplined.MainActivity.SORT;
 import static com.example.disciplined.MainActivity.setAlarmList;
 import static com.example.disciplined.MainActivity.setDBalarm;
@@ -75,23 +71,27 @@ public class DayFragment extends android.support.v4.app.Fragment {
             public void onFinsh() {
                 viewModle.setAllTask(new Date(theDay),
                         new SimpleDateFormat("EEEE", Locale.ENGLISH).format(new Date(theDay)), SORT);
+                taskAdapter.submitList(viewModle.getAllTask());
+
 
             }
 
             @Override
-            public void onClikRemaove(insertTask task) {
+            public void onClikRemaove(int task) {
 
                 taskAdapter.notifyDataSetChanged();
-                viewModle.deleteTask(task.getTask().getId());
+                viewModle.deleteTask(viewModle.getAllTask().get(task).getTask().getId());
                 viewModle.setAllTask(new Date(theDay),
                         new SimpleDateFormat("EEEE", Locale.ENGLISH).format(new Date(theDay)), SORT);
+                taskAdapter.submitList(viewModle.getAllTask());
+                lastPosition--;
 
             }
 
             @Override
-            public void onClikDone(insertTask task, com.example.disciplined.taskAdapter.taskHolder holder) {
-                if(task.getTask().getStatus()!=1) {
-                    task.getTask().setStatus(1);
+            public void onClikDone(int task, com.example.disciplined.taskAdapter.taskHolder holder) {
+                if(viewModle.getAllTask().get(task).getTask().getStatus()!=1) {
+                    viewModle.getAllTask().get(task).getTask().setStatus(1);
                     holder.doneB.setDrawingCacheBackgroundColor(getColor(getContext(), R.color.colorPrimary));
                     holder.time.setTextColor(getColor(getContext(), R.color.colorPrimary));
                     holder.timeIcon.setImageResource(R.drawable.done);
@@ -99,9 +99,10 @@ public class DayFragment extends android.support.v4.app.Fragment {
                     holder.repeatIcon.setColorFilter(getColor(getContext(), R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
                     holder.alarmIcon.setColorFilter(getColor(getContext(), R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
                     holder.notifition.setColorFilter(getColor(getContext(), R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
-                    viewModle.updateTask(task.getTask());
+                    viewModle.updateTask(viewModle.getAllTask().get(task).getTask());
                     viewModle.setAllTask(new Date(theDay),
                             new SimpleDateFormat("EEEE", Locale.ENGLISH).format(new Date(theDay)), SORT);
+                    taskAdapter.submitList(viewModle.getAllTask());
                 }
                 setDbReminder(getActivity().getApplication());
                 setRemainderOfDay(getActivity().getApplication());
@@ -110,32 +111,22 @@ public class DayFragment extends android.support.v4.app.Fragment {
             }
 
             @Override
-            public void onClikEdite(insertTask task) {
+            public void onClikEdite(int task) {
 
                 Intent i = new Intent(getContext(), NewTask.class);
-                i.putExtra("id", task.getTask().getId());
+                i.putExtra("id", viewModle.allTask.get(task).getTask().getId());
+                Log.i("azsx", viewModle.allTask.get(task).getTask().getId()+"+"+task);
+
                 startActivity(i);
 
             }
         }, theDay);
         taskList.setAdapter(taskAdapter);
-        taskAdapter.submitList(null);
-        viewModle.getAllTask().observe(this, new Observer<List<insertTask>>() {
-            @Override
-            public void onChanged(@Nullable List<insertTask> insertTasks) {
 
-                ArrayList<insertTask> clone=new ArrayList<>();
-                if(insertTasks!=null) {
-                    insertTasks = refrshTask(insertTasks);
-                    for (int i = 0; i < insertTasks.size(); i++) {
-                        clone.add(insertTasks.get(i));
-                    }
-                }
                 Log.i("azsx", SORT);
 
-                taskAdapter.submitList(clone);
-            }
-        });
+                taskAdapter.submitList(viewModle.getAllTask());
+
 
         setHasOptionsMenu(true);
         return view;
@@ -154,6 +145,9 @@ public class DayFragment extends android.support.v4.app.Fragment {
                 SORT = "Date ASC";
                 viewModle.setAllTask(new Date(theDay),
                         new SimpleDateFormat("EEEE", Locale.ENGLISH).format(new Date(theDay)), SORT);
+                taskAdapter.submitList(viewModle.getAllTask());
+
+
                 sorting = Objects.requireNonNull(getActivity()).getSharedPreferences("package com.example.disciplined", Context.MODE_PRIVATE);
                 sorting.edit().putString(wayOfSorting, SORT).apply();
 
@@ -162,6 +156,9 @@ public class DayFragment extends android.support.v4.app.Fragment {
                 SORT = "importance DESC";
                 viewModle.setAllTask(new Date(theDay),
                         new SimpleDateFormat("EEEE", Locale.ENGLISH).format(new Date(theDay)), SORT);
+
+                taskAdapter.submitList(viewModle.getAllTask());
+
                 sorting = Objects.requireNonNull(getActivity()).getSharedPreferences("package com.example.disciplined", Context.MODE_PRIVATE);
                 sorting.edit().putString(wayOfSorting, SORT).apply();
                 return true;
@@ -169,6 +166,8 @@ public class DayFragment extends android.support.v4.app.Fragment {
                 SORT = "title ASC";
                 viewModle.setAllTask(new Date(theDay),
                         new SimpleDateFormat("EEEE", Locale.ENGLISH).format(new Date(theDay)), SORT);
+                taskAdapter.submitList(viewModle.getAllTask());
+
                 sorting = Objects.requireNonNull(getActivity()).getSharedPreferences("package com.example.disciplined", Context.MODE_PRIVATE);
                 sorting.edit().putString(wayOfSorting, SORT).apply();
 
@@ -189,7 +188,7 @@ public class DayFragment extends android.support.v4.app.Fragment {
             view.findViewById(R.id.divider2).setVisibility(View.VISIBLE);
             view.findViewById(R.id.item).setAlpha(1f);
             TextView note = view.findViewById(R.id.NoteDE);
-            note.setText(viewModle.allTask.getValue().get(position).getTask().getDescription());
+            note.setText(viewModle.allTask.get(position).getTask().getDescription());
             note.setVisibility(View.VISIBLE);
             if (view.findViewById(R.id.repeat).getVisibility() == View.VISIBLE) {
                 TextView RepeatDE = view.findViewById(R.id.RepeatDE);
@@ -210,8 +209,8 @@ public class DayFragment extends android.support.v4.app.Fragment {
             view.findViewById(R.id.detaile).setVisibility(View.VISIBLE);
             TextView Atime = view.findViewById(R.id.Rtimes);
             if (Atime.getText().toString().equals(getString(R.string.time_is_up)))
-                Atime.setText(NewTask.changeTimeFormat(viewModle.allTask.getValue().get(position).getTask().getDate().getHours(),
-                        viewModle.allTask.getValue().get(position).getTask().getDate().getMinutes(), getContext()));
+                Atime.setText(NewTask.changeTimeFormat(viewModle.allTask.get(position).getTask().getDate().getHours(),
+                        viewModle.allTask.get(position).getTask().getDate().getMinutes(), getContext()));
             lastPosition = position;
             lastVeiw = view;
             isOpen = true;
@@ -250,10 +249,10 @@ public class DayFragment extends android.support.v4.app.Fragment {
                     d2+= String.valueOf(date2.getMonth());
                     d1+= String.valueOf(date1.getDate());
                     d2+= String.valueOf(date2.getDate());
-                    if (viewModle.allTask.getValue().get(index).getTask().getStatus()!=1&&
+                    if (viewModle.allTask.get(index).getTask().getStatus()!=1&&
                             (Integer.valueOf(d1)>Integer.valueOf(d2)||(d1.equals(d2) &&
-                        SetCounter(viewModle.allTask.getValue().get(index).getTask().getDate().getHours(),
-                            viewModle.allTask.getValue().get(index).getTask().getDate().getMinutes()) < 0))) {
+                        SetCounter(viewModle.allTask.get(index).getTask().getDate().getHours(),
+                            viewModle.allTask.get(index).getTask().getDate().getMinutes()) < 0))) {
                         Atime.setText(getString(R.string.time_is_up));
                         vie.findViewById(R.id.item).setAlpha(0.5f);
                     }
@@ -269,6 +268,8 @@ public class DayFragment extends android.support.v4.app.Fragment {
         super.onResume();
         viewModle.setAllTask(new Date(theDay),
                 new SimpleDateFormat("EEEE", Locale.ENGLISH).format(new Date(theDay)), SORT);
+        taskAdapter.submitList(viewModle.getAllTask());
+
     }
 
     public List<insertTask> refrshTask(List<insertTask> list) {

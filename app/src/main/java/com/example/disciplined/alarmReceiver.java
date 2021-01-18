@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.disciplined.db.db_tables.alarmSitting_table;
 import com.example.disciplined.db.db_tables.taskTable;
@@ -88,8 +89,7 @@ public class alarmReceiver extends IntentService {
                     mediaPlayer = MediaPlayer.create(context, Uri.fromFile(new File(sitting.getSound())));
                     mediaPlayer.start();
                 }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O||
-                        (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH && isDeviceLock(context))) {
+                if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH && isDeviceLock(context))) {
 //            IntentFilter filter = new IntentFilter();
 //            filter.addAction(Intent.ACTION_SCREEN_ON);
 //            filter.addAction(ACTION_DEBUG);
@@ -99,8 +99,25 @@ public class alarmReceiver extends IntentService {
                     ii.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     ii.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.getApplicationContext().startActivity(ii);
-                } else {
+                }
+                else {
                     wm = (WindowManager) context.getSystemService(WINDOW_SERVICE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        params = new WindowManager.LayoutParams(
+                                WindowManager.LayoutParams.WRAP_CONTENT,
+                                WindowManager.LayoutParams.WRAP_CONTENT ,
+                                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                                        | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                                PixelFormat.TRANSLUCENT);
+                    }
+                    else  params = new WindowManager.LayoutParams(
+                            WindowManager.LayoutParams.WRAP_CONTENT,
+                            WindowManager.LayoutParams.WRAP_CONTENT ,
+                            WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                            | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                            PixelFormat.TRANSLUCENT);
                     int resources = 0;
                     resources = R.layout.alarm_ring_unlock;
                     final int finalResources = resources;
@@ -120,11 +137,6 @@ public class alarmReceiver extends IntentService {
                             snoozeList.getInt("R" + alarmList.get(currentIndex).getId(), -1) <= 0) ||
                             sitting.getSnoozeIson() == 0)
                         snooze.setVisibility(View.GONE);
-                    params = new WindowManager.LayoutParams(
-                            WindowManager.LayoutParams.WRAP_CONTENT,
-                            WindowManager.LayoutParams.WRAP_CONTENT,WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
-                            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
-                            PixelFormat.TRANSLUCENT);
                     snooze.setOnClickListener(new View.OnClickListener() {
 
                         @Override
@@ -218,6 +230,7 @@ public class alarmReceiver extends IntentService {
                     });
                 }
             } else {
+                Toast.makeText(context,"check overlay permission for more flexible experience",Toast.LENGTH_LONG).show();
                 Intent ii = new Intent(context, alamLockScreen.class);
                 ii.putExtra("ID", currentIndex);
                 ii.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
