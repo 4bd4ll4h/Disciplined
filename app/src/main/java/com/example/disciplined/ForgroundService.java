@@ -1,28 +1,15 @@
 package com.example.disciplined;
-
 import android.app.AlarmManager;
 import android.app.Application;
-import android.app.DatePickerDialog;
+import android.app.Notification;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.Settings;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.TabLayout;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.DatePicker;
 
 import com.example.disciplined.db.db_tables.alarm_table;
 import com.example.disciplined.db.db_tables.remainders_table;
@@ -33,65 +20,51 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
+import static com.example.disciplined.MainActivity.SORT;
+import static com.example.disciplined.MainActivity.alarmList;
+import static com.example.disciplined.MainActivity.remainderOfDay;
+import static com.example.disciplined.MainActivity.snoozeList;
 
-    private ViewPager viewPager;
-    private fragmentAdapter fragmentAdapter;
-    private TabLayout daysTab;
-    public static   SharedPreferences sorting;
-    public static  String SORT;
-    public static final String wayOfSorting="wayOfSorting";
-    protected static SharedPreferences snoozeList;
-    protected static ArrayList<remainders_table> remainderOfDay;
-    protected static ArrayList<alarm_table>alarmList;
+
+public class ForgroundService extends Service{
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        sorting = Objects.requireNonNull(this).getSharedPreferences("package com.example.disciplined", Context.MODE_PRIVATE);
-
-        SORT=sorting.getString(wayOfSorting,"Date ASC");
-
-
-        if(!method.checkOverlayPremission(this)){
-            AlertDialog.Builder builder=new AlertDialog.Builder(this);
-            builder.setTitle(R.string.Screenoverlaydetected);
-            builder.setMessage(R.string.toMake);
-            builder.setPositiveButton(R.string.OPENSETTINGS, new DialogInterface.OnClickListener() {
-                @RequiresApi(api = Build.VERSION_CODES.M)
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent =new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:"+getPackageName()));
-                    startActivity(intent);
-                }
-            });
-            AlertDialog alertDialog=builder.create();
-            alertDialog.show();
-        }
-
-
-        viewPager=findViewById(R.id.pager);
-        fragmentAdapter=new fragmentAdapter(getSupportFragmentManager(),this);
-        viewPager.setAdapter(fragmentAdapter);
-
-        daysTab=findViewById(R.id.tabs);
-        daysTab.setupWithViewPager(viewPager);
-        viewPager.setCurrentItem(Calendar.getInstance().get(Calendar.DAY_OF_WEEK)-1);
-
-
-
-
-        snoozeList=getSharedPreferences("package com.example.athefourth.sia", Context.MODE_PRIVATE);
-
-
-
-
-        startService();
+    public void onCreate() {
+        super.onCreate();
+        am12check(getApplication());
+        setDbReminder(getApplication());
+        setRemainderOfDay(getApplication());
+        setDBalarm(getApplication());
+        setAlarmList(getApplication());
+    }
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                0, notificationIntent, 0);
+        Notification notification = new NotificationCompat.Builder(this,RemainderNotifications.AlarmChannle )
+                .setContentTitle("Alarms Are  ")
+                .setContentText("")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentIntent(pendingIntent)
+                .build();
+        startForeground(1, notification);
+        //do heavy work on a background thread
+        //stopSelf();
+        return START_NOT_STICKY;
     }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        am12check(getApplication());
+        setDbReminder(getApplication());
+        setRemainderOfDay(getApplication());
+        setDBalarm(getApplication());
+        setAlarmList(getApplication());
+        return null;
+    }
 
     public static void am12check(Context context){
         Calendar am=Calendar.getInstance();
@@ -121,9 +94,9 @@ public class MainActivity extends AppCompatActivity {
             insertTask Task=tasks.next();
 
             if(Task.getTask().getStatus()!=1)
-            remainderOfDay.addAll(Task.getRemainders());
+                remainderOfDay.addAll(Task.getRemainders());
         }
-        for (Iterator<remainders_table>remainder=remainderOfDay.iterator();remainder.hasNext();){
+        for (Iterator<remainders_table> remainder = remainderOfDay.iterator(); remainder.hasNext();){
             remainders_table remainders_table=remainder.next();
             if(remainders_table.getDate().getTime()<Calendar.getInstance().getTimeInMillis()){
 
@@ -179,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         snoozeList=context.getSharedPreferences("package com.example.athefourth.sia", Context.MODE_PRIVATE);
-        for(Iterator<alarm_table>alarmey=alarmList.iterator();alarmey.hasNext();){
+        for(Iterator<alarm_table> alarmey = alarmList.iterator(); alarmey.hasNext();){
             alarm_table alarmy2=alarmey.next();
             if(!snoozeList.contains("R"+alarmy2.getId()))
                 if(alarmy2.getDate().getTime()<Calendar.getInstance().getTimeInMillis())
@@ -244,56 +217,4 @@ public class MainActivity extends AppCompatActivity {
         }else Log.i("asdfv","empty "+alarmList.size());
     }
 
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_activty, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.New_task) {
-            DatePickerDialog pickerDialog =new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                   Date date= new Date(year-1900,month,dayOfMonth);
-                    startActivity(new Intent(MainActivity.this,goTo.class).putExtra("theDay",date.toString()));
-
-                }
-            },Calendar.getInstance().get(Calendar.YEAR),Calendar.getInstance().get(Calendar.MONTH),Calendar.getInstance().get(Calendar.DATE));
-            pickerDialog.show();
-
-            return true;
-        }
-
-        return false;
-    }
-    public void startService() {
-        Intent serviceIntent = new Intent(this, ForgroundService.class);
-        ContextCompat.startForegroundService(this, serviceIntent);
-    }
-    public void stopService() {
-        Intent serviceIntent = new Intent(this, ForgroundService.class);
-        stopService(serviceIntent);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        am12check(getApplication());
-        setDbReminder(getApplication());
-        setRemainderOfDay(getApplication());
-        setDBalarm(getApplication());
-        setAlarmList(getApplication());
-    }
-
-    public void addnewTask(View view) {
-        Intent i=new Intent(MainActivity.this,NewTask.class);
-        startActivity(i);
-    }
 }

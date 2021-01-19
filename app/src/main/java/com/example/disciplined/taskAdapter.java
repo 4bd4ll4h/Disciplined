@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.recyclerview.extensions.ListAdapter;
@@ -18,10 +19,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.disciplined.db.db_tables.taskTable;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -31,15 +35,20 @@ import static android.support.v4.content.ContextCompat.getDrawable;
 
 
 public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder> {
+
     private static final DiffUtil.ItemCallback<insertTask> diffCallback = new DiffUtil.ItemCallback<insertTask>() {
         @Override
         public boolean areItemsTheSame(insertTask oldItem, insertTask newItem) {
             return oldItem.getTask().getId().equals(newItem.getTask().getId());
         }
 
+
         @Override
         public boolean areContentsTheSame(insertTask oldItem, insertTask newItem) {
-            return oldItem.getTask().getId().equals(newItem.getTask().getId()) &&
+            return false;
+
+            /*
+                    oldItem.getTask().getId().equals(newItem.getTask().getId()) &&
                     oldItem.getTask().getDate().toString().equals(newItem.getTask().getDate().toString()) &&
                     oldItem.getTask().getTitle().equals(newItem.getTask().getTitle()) &&
                     oldItem.getTask().getRepeat().equals(newItem.getTask().getRepeat()) &&
@@ -48,14 +57,17 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
                     oldItem.getTask().getStatus() == newItem.getTask().getStatus() &&
                     oldItem.getAlarms().size() == newItem.getAlarms().size() &&
                     oldItem.getRemainders().size() == newItem.getRemainders().size();
+                    */
         }
     };
+
     private final Context context;
     private final taskAdapterInterface taskFace;
     private final String theDay;
     private insertTask task1;
     private taskHolder taskHolder;
     taskTable task;
+    List<insertTask> taskList;
 
     protected taskAdapter(Context context, taskAdapterInterface taskFace, String theDay) {
 
@@ -78,8 +90,8 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
     @Override
     public void onBindViewHolder(@NonNull final taskHolder holder, @SuppressLint("RecyclerView") final int position) {
         Log.i("safsdaf", getItemCount() + "i");
-
-         task = getItem(position).getTask();
+        holder.setIsRecyclable(false);
+        task = getItem(position).getTask();
         task1 = getItem(position);
         taskHolder = holder;
         holder.title.setText(task.getTitle());
@@ -87,20 +99,24 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
         holder.remainderText.setText(String.format("%d%s", getItem(position).getRemainders().size(), context.getString(R.string.Reminders)));
         holder.alarmText.setText(String.format("%d%s", getItem(position).getAlarms().size(), context.getString(R.string.Alarms)));
         holder.repeatText.setText(task.getRepeat());
-        if (holder.countDownTimer != null) {
-            holder.countDownTimer.cancel();
-        }
-        float sec = SetCounter(task.getDate().getHours(), task.getDate().getMinutes());
-        Log.i("safsd13", holder.getAdapterPosition() + ":"+getHolder().getAdapterPosition()+":"+position);
 
-        if (task.getStatus() != 1 && sec > 0 && holder.getAdapterPosition() == 0 &&
+
+        if (holder.getCountDownTimer() != null) {
+            holder.getCountDownTimer().cancel();
+            holder.setCountDownTimer(null);
+            holder.time.setText(NewTask.changeTimeFormat(task.getDate().getHours(), task.getDate().getMinutes(), context));
+            Log.i("safsd13", task.getTitle() + "nul");
+        }
+
+
+        float sec = SetCounter(getItem(holder.getAdapterPosition()).getTask().getDate().getHours(),
+                getItem(holder.getAdapterPosition()).getTask().getDate().getMinutes());
+        if (getItem(holder.getAdapterPosition()).getTask().getStatus() != 1 &&
+                sec > 0 && holder.getAdapterPosition() == 0 &&
                 (new Date().getYear() == new Date(theDay).getYear() &&
                         new Date().getMonth() == new Date(theDay).getMonth() &&
                         new Date().getDate() == new Date(theDay).getDate())) {
-            Log.i("safsd13", getItemCount() + "in");
-
-            final taskTable finalMtask = task;
-
+            Log.i("safsd13", task.getTitle() + "in"+"  "+holder.getAdapterPosition()+position);
             final int[] CH = new int[1];
             final int[] Cm = new int[1];
             final int[] Csecand = new int[1];
@@ -111,23 +127,22 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
                     CH[0] = (int) millisUntilFinished / (60 * 60);
                     Cm[0] = (int) (millisUntilFinished % (60 * 60)) / (60);
                     Csecand[0] = (int) (millisUntilFinished % (60 * 60)) - (Cm[0] * 60);
-                    getHolder().time.setText(CH[0] + ":" + Cm[0] + ":" + Csecand[0]);
-                    Log.i("tag13",position+" : "+holder.title.getText());
+                    holder.time.setText(CH[0] + ":" + Cm[0] + ":" + Csecand[0]);
                 }
+
 
                 @Override
                 public void onFinish() {
-                    getHolder().item.setAlpha(0.5f);
-                    getHolder().time.setText(R.string.time_is_up);
+                    holder.item.setAlpha(0.5f);
+                    holder.time.setText(R.string.time_is_up);
                     taskFace.onFinsh();
 
                 }
 
-
             });
-            holder.countDownTimer.start();
-        }
-        else {
+            holder.getCountDownTimer().start();
+
+        } else {
             Date date1 = new Date();
             Date date2 = new Date(theDay);
             String d1 = "", d2 = "";
@@ -215,19 +230,17 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
         if (!task.getRepeat().equals(context.getString(R.string.just_once)) &&
                 !task.getRepeat().equals("مرة واحدة") && !task.getRepeat().equals("")) {
             holder.repeatIcon.setVisibility(View.VISIBLE);
+            holder.doneB.setAlpha(0.5f);
         }
 
 
+
     }
 
 
-    private taskHolder getHolder() {
-        return taskHolder;
-    }
 
-    private insertTask getItem() {
-        return task1;
-    }
+
+
 
     public class taskHolder extends RecyclerView.ViewHolder {
         TextView title;
@@ -245,7 +258,7 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
         TextView alarmText;
         TextView repeatText;
         TextView detail;
-        CountDownTimer countDownTimer;
+        CountDownTimer countDownTimer=null;
 
         public taskHolder(final View view) {
             super(view);
@@ -306,6 +319,9 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
             doneB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if(taskAdapter.taskHolder.this.doneB.getAlpha()==0.5f)
+                        Toast.makeText(context,"Done is unable when Repeating is enable",Toast.LENGTH_LONG).show();
+                    else
                     taskFace.onClikDone(getAdapterPosition(), taskAdapter.taskHolder.this);
                 }
             });
@@ -323,6 +339,8 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
             this.countDownTimer = countDownTimer;
 
         }
+
+
     }
 
 
@@ -343,13 +361,12 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
         return sec;
     }
 
-    @Override
-    public void submitList(List<insertTask> list) {
-        if(taskHolder!=null&&taskHolder.countDownTimer!=null){
-            taskHolder.countDownTimer.cancel();
-            taskHolder.time.setText(NewTask.changeTimeFormat(task.getDate().getHours(), task.getDate().getMinutes(), context)); }
-        super.submitList(list);
-        this.notifyDataSetChanged();
+    public void submitList1(List<insertTask> list) {
+
+        if(list!=null)taskList =new ArrayList<>(list);
+        super.submitList(taskList);
+        taskAdapter.this.submitList(list);
+
     }
 
     interface taskAdapterInterface {
@@ -363,4 +380,5 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
 
         void onClikEdite(int task);
     }
+
 }

@@ -3,6 +3,8 @@ package com.example.disciplined;
 import android.app.Application;
 import android.app.IntentService;
 import android.app.KeyguardManager;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -14,6 +16,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -57,6 +60,16 @@ public class alarmReceiver extends IntentService {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         currentIndex = intent.getIntExtra("ID", 0);
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                0, notificationIntent, 0);
+        Notification notification = new NotificationCompat.Builder(this,RemainderNotifications.AlarmChannle )
+                .setContentTitle("Alarms Are  ")
+                .setContentText("")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentIntent(pendingIntent)
+                .build();
+        startForeground(1, notification);
 
         return START_NOT_STICKY;
 
