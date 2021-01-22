@@ -29,7 +29,6 @@ public class doneSerice extends IntentService {
         disciplined_repository repository=new disciplined_repository((getApplication()));
         insertTask t=repository.getTask(currentIn);
         t.getTask().setStatus(1);
-        Log.i("adddzsx", "update");
         repository.upateTask(t.getTask());
         setDbReminder(getApplication());
         setRemainderOfDay(getApplication());

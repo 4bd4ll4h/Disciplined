@@ -66,8 +66,6 @@ public class NewTask extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_task);
-        //Toolbar toolbar = findViewById(R.id.toolbar);
-        // setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle(getString(R.string.title_activity_new_task));
 
@@ -108,7 +106,6 @@ public class NewTask extends AppCompatActivity {
         viewModle.getRmainder().observe(this, new Observer<List<remainders_table>>() {
             @Override
             public void onChanged(@Nullable List<remainders_table> remainders_tables) {
-                Log.i("onRes", remainders_tables.size() + "size");
                 ArrayList<remainders_table> clone = new ArrayList<>();
                 for (remainders_table r : remainders_tables) {
                     clone.add(r);
@@ -288,6 +285,8 @@ public class NewTask extends AppCompatActivity {
         }).attachToRecyclerView(alarm_list);
     }
 
+    // note that mImportnaceText is working but after second thoughts I decided that it's not necessary
+    // you can enable it by changing the visibility attribute from GONE to VISIBLE in the xml
     private void setSeek(int progress) {
         if (progress < 2) {
             mImportnaceText.setText(getString(R.string.notImportent));

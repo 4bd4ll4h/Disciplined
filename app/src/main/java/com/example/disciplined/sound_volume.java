@@ -125,7 +125,6 @@ public class sound_volume extends BottomSheetDialogFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 mediaPlayer.reset();
-                Log.i("voiceNote", arrayList.get(position)[1]);
                 mediaPlayer = MediaPlayer.create(context, Uri.parse(arrayList.get(position)[1]));
 
                 try {
@@ -134,7 +133,6 @@ public class sound_volume extends BottomSheetDialogFragment {
                     mediaPlayer = MediaPlayer.create(context, Uri.fromFile(new File(arrayList.get(position)[1])));
                     mediaPlayer.start();
                 }
-                Log.i("checkingSize", arrayList.size() + " --- " + soundsList.getCount());
             }
         });
 
@@ -149,14 +147,12 @@ public class sound_volume extends BottomSheetDialogFragment {
                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
                 mediaPlayer = MediaPlayer.create(context,
                         Uri.parse(arrayList.get(soundsList.getCheckedItemPosition())[1]));
-                Log.i("dataBase9", arrayList.get(soundsList.getCheckedItemPosition())[1]);
 
                 try {
                     mediaPlayer.start();
                 } catch (Exception e) {
                     mediaPlayer = MediaPlayer.create(context, Uri.fromFile(new File(arrayList.get(soundsList.getCheckedItemPosition())[1])));
                     mediaPlayer.start();
-                    Log.i("checkingSize", arrayList.size() + " --- m" + soundsList.getCheckedItemPosition());
                 }
 
             }
@@ -174,7 +170,6 @@ public class sound_volume extends BottomSheetDialogFragment {
         });
 
 
-        Log.i("checkingSize", arrayList.size() + " --- " + soundsList.getCount());
         hideView(app_bar_layout);
 
         mBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -182,11 +177,9 @@ public class sound_volume extends BottomSheetDialogFragment {
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (BottomSheetBehavior.STATE_EXPANDED == newState) {
                     showView(app_bar_layout, getActionBarSize());
-                    Log.i("checkingSize", arrayList.size() + " -d-- " + soundsList.getCheckedItemPosition());
                 }
                 if (BottomSheetBehavior.STATE_COLLAPSED == newState) {
                     hideView(app_bar_layout);
-                    Log.i("checkingSize", arrayList.size() + " -s-- " + soundsList.getCheckedItemPosition());
 
                 }
 
@@ -229,7 +222,6 @@ public class sound_volume extends BottomSheetDialogFragment {
     public void onStart() {
         super.onStart();
         mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        Log.i("checkingSize", "--onStart");
 
     }
 
@@ -243,7 +235,6 @@ public class sound_volume extends BottomSheetDialogFragment {
                 MediaMetadataRetriever retriever = new MediaMetadataRetriever();
                 retriever.setDataSource(pathname.getAbsolutePath());
                 String isAudio = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO);
-                Log.i("voiceNote", isAudio);
                 return isAudio != null && isAudio.equals("yes");
             }
         });
@@ -275,7 +266,6 @@ public class sound_volume extends BottomSheetDialogFragment {
     }
 
     public void startRecording() {
-        Log.i("checkingSize", arrayList.size() + " --- " + soundsList.getCheckedItemPosition());
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO)
                 == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -295,7 +285,7 @@ public class sound_volume extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(context, "RECORD BUTTON CLICKED", Toast.LENGTH_SHORT).show();
-                Log.d("RecordButton", "RECORD BUTTON CLICKED");
+
             }
         });
 
@@ -353,7 +343,6 @@ public class sound_volume extends BottomSheetDialogFragment {
 
             @Override
             public void onFinish(long recordTime) {
-
                 voiceNote.stop();
                 voiceNote.release();
                 String time = getHumanTimeText(recordTime);
@@ -378,7 +367,7 @@ public class sound_volume extends BottomSheetDialogFragment {
                 Log.d("RecordView", "Basket Animation Finished");
             }
         });
-        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -389,7 +378,7 @@ public class sound_volume extends BottomSheetDialogFragment {
                 soundsList.setItemChecked(getListId(), true);
             }
         });
-        builder.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.Cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (!outputFile.equals("")) {

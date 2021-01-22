@@ -180,11 +180,10 @@ public class addAlarm extends BottomSheetDialogFragment {
 
     @Override
     public void onResume() {
-        Log.i("onDesT","onr1");
 
         super.onResume();
         setSitting();
-        Log.i("onDesT","onr2");
+
 
 
     }
@@ -226,7 +225,6 @@ public class addAlarm extends BottomSheetDialogFragment {
     public void onStart() {
         super.onStart();
         setSitting();
-        Log.i("onDesT","onStart");
         mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
     private TimePickerDialog.OnTimeSetListener TPL =

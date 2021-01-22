@@ -63,7 +63,6 @@ public class NewTaskViewModle extends AndroidViewModel {
     void addreminder(remainders_table remainders_table) {
         remainders_table.setId(count);
         count++;
-        Log.i("onRes", remainders_table.getId() + "index");
         List<remainders_table> r = new ArrayList<>();
         if (remaindersLis.getValue() != null) {
             r = remaindersLis.getValue();
@@ -86,10 +85,10 @@ public class NewTaskViewModle extends AndroidViewModel {
         alarm_table.setId(count);
         count++;
         if(selectedSitting.getAlarmName().equals(""))
+            // password here is a joke XD just used as unique set of character :)
         selectedSitting.setAlarmName("password is a the fourth "+Calendar.getInstance().toString());
         repository.insertSitting(selectedSitting);
         alarm_table.setSitting(selectedSitting.getAlarmName());
-        Log.i("onRes", alarm_table.getId() + "index");
         List<alarm_table> r = new ArrayList<>();
         if (alarmList.getValue() != null) {
             r = alarmList.getValue();
@@ -109,7 +108,6 @@ public class NewTaskViewModle extends AndroidViewModel {
 
 
     public void insertTask(){
-        Log.i("tag00","dfgvcb");
         repository.insetTsak(new insertTask(task,remaindersLis.getValue(),alarmList.getValue(),null));
     }
 
@@ -128,7 +126,7 @@ public class NewTaskViewModle extends AndroidViewModel {
     }
 
     public void setSelectedSitting(int pos) {
-            Log.i("asyncTaskListtrcked",repository.getSitting().size()+" out");
+
 
         sitting= (ArrayList<alarmSitting_table>) repository.getSitting();
 
@@ -136,7 +134,6 @@ public class NewTaskViewModle extends AndroidViewModel {
     }
 
     public void updateTask() {
-        Log.i("asyncTaskListDone","updte");
 
         repository.upateTask(new insertTask(task,remaindersLis.getValue(),alarmList.getValue(),null));
     }

@@ -1,5 +1,6 @@
 package com.example.disciplined;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.DatePickerDialog;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
@@ -18,7 +20,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +35,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Objects;
+
+import static android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS;
+import static android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -70,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
             });
             AlertDialog alertDialog=builder.create();
             alertDialog.show();
+
         }
 
 
@@ -86,10 +91,13 @@ public class MainActivity extends AppCompatActivity {
 
         snoozeList=getSharedPreferences("package com.example.athefourth.sia", Context.MODE_PRIVATE);
 
+        am12check(getApplication());
+        setDbReminder(getApplication());
+        setRemainderOfDay(getApplication());
+        setDBalarm(getApplication());
+        setAlarmList(getApplication());
 
 
-
-        startService();
     }
 
 
@@ -101,9 +109,15 @@ public class MainActivity extends AppCompatActivity {
                 0,0,0);
         AlarmManager am12=(AlarmManager) context.getSystemService(ALARM_SERVICE);
         Intent intent=new Intent(context,am12.class);
-        PendingIntent pendIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            intent.setAction(ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+        }
+        PendingIntent pendIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         if (am12 != null) {
-            am12.setInexactRepeating(AlarmManager.RTC_WAKEUP, am.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendIntent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                am12.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, am.getTimeInMillis(), pendIntent);
+            }else
+                am12.setExact(AlarmManager.RTC_WAKEUP, am.getTimeInMillis(), pendIntent);
         }
 
     }
@@ -115,34 +129,32 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayList<insertTask>list= (ArrayList<insertTask>) repository.getAllTask(new Date(),
                 new SimpleDateFormat("EEEE", Locale.ENGLISH).format(new Date()),SORT);
-        Log.i("test@1",list.size()+" current ");
         Date date=new Date();
         for(Iterator<insertTask> tasks = list.iterator(); tasks.hasNext();){
             insertTask Task=tasks.next();
 
             if(Task.getTask().getStatus()!=1)
-            remainderOfDay.addAll(Task.getRemainders());
+                remainderOfDay.addAll(Task.getRemainders());
         }
-        for (Iterator<remainders_table>remainder=remainderOfDay.iterator();remainder.hasNext();){
+        for (Iterator<remainders_table> remainder = remainderOfDay.iterator(); remainder.hasNext();){
             remainders_table remainders_table=remainder.next();
             if(remainders_table.getDate().getTime()<Calendar.getInstance().getTimeInMillis()){
 
                 remainder.remove();
             }
         }
-        Log.i("test@1",remainderOfDay.size()+" DEL current ");
 
     }
 
     public static void setRemainderOfDay(Application context){
 
-        Log.i("test@1",remainderOfDay.size()+" remainders");
+
         int index=0;
         for(int u=0;u<remainderOfDay.size();u++){
             if(u!=0&&(remainderOfDay.get(u).getDate().getTime()<remainderOfDay.get(index).getDate().getTime()) )
                 index=u;
         }
-        Log.i("test@1",index+" current index");
+
         if(!remainderOfDay.isEmpty()) {
             AlarmManager remainderAlarm = (AlarmManager) context.getSystemService(ALARM_SERVICE);
             Calendar calendar = Calendar.getInstance();
@@ -153,11 +165,17 @@ public class MainActivity extends AppCompatActivity {
                     remainderOfDay.get(index).getDate().getHours(),
                     remainderOfDay.get(index).getDate().getMinutes(),
                     0);
-            Intent intent = new Intent(context, remainderList.class);
+            Intent intent = new Intent(context, RemaindersRecevier.class);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                intent.setAction(ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+            }
             intent.putExtra("ID", index);
-            PendingIntent pendingIntent = PendingIntent.getService(context,  remainderOfDay.get(index).getId(), intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context,  remainderOfDay.get(index).getId(), intent, 0);
             if (remainderAlarm != null) {
-                remainderAlarm.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    remainderAlarm.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                }else
+                    remainderAlarm.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
             }
         }
     }
@@ -169,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayList<insertTask>list= (ArrayList<insertTask>) repository.getAllTask(new Date(),
                 new SimpleDateFormat("EEEE", Locale.ENGLISH).format(new Date()),SORT);
-        Log.i("test@1",list.size()+" current ");
         Date date=new Date();
         for(Iterator<insertTask> tasks = list.iterator(); tasks.hasNext();){
             insertTask Task=tasks.next();
@@ -179,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         snoozeList=context.getSharedPreferences("package com.example.athefourth.sia", Context.MODE_PRIVATE);
-        for(Iterator<alarm_table>alarmey=alarmList.iterator();alarmey.hasNext();){
+        for(Iterator<alarm_table> alarmey = alarmList.iterator(); alarmey.hasNext();){
             alarm_table alarmy2=alarmey.next();
             if(!snoozeList.contains("R"+alarmy2.getId()))
                 if(alarmy2.getDate().getTime()<Calendar.getInstance().getTimeInMillis())
@@ -204,7 +221,6 @@ public class MainActivity extends AppCompatActivity {
 
             else {
 
-                Log.i("asdfv",snoozeH+":"+snoozeM+":"+snoozeR);
                 if(snoozeR>=0){
                     if (u != 0 && (snoozeH < alarmList.get(index).getDate().getHours() ||
                             (snoozeH == alarmList.get(index).getDate().getHours()
@@ -235,16 +251,20 @@ public class MainActivity extends AppCompatActivity {
                             snoozeList.getInt("M"+alarmList.get(index).getId(),0):
                             alarmList.get(index).getDate().getMinutes(),
                     0);
-            Log.i("asdfv",calendar.get(Calendar.HOUR)+":"+calendar.get(Calendar.MINUTE));
-            Intent intent = new Intent(context, alarmReceiver.class);
+            Intent intent = new Intent(context, AlarmReceiver.class);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                intent.setAction(ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+            }
             intent.putExtra("ID", index);
 
-            PendingIntent pendingIntent = PendingIntent.getService(context, (int) alarmList.get(index).getId(), intent, 0);
-            remainderAlarm.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-        }else Log.i("asdfv","empty "+alarmList.size());
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, (int) alarmList.get(index).getId(), intent, 0);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                remainderAlarm.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            }else
+                remainderAlarm.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+        }
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -273,11 +293,11 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
     public void startService() {
-        Intent serviceIntent = new Intent(this, ForgroundService.class);
+        Intent serviceIntent = new Intent(this, AlarmReceiver.class);
         ContextCompat.startForegroundService(this, serviceIntent);
     }
     public void stopService() {
-        Intent serviceIntent = new Intent(this, ForgroundService.class);
+        Intent serviceIntent = new Intent(this, AlarmReceiver.class);
         stopService(serviceIntent);
     }
 
@@ -296,4 +316,7 @@ public class MainActivity extends AppCompatActivity {
         Intent i=new Intent(MainActivity.this,NewTask.class);
         startActivity(i);
     }
+
+
+
 }

@@ -63,7 +63,6 @@ public class snooze extends DialogFragment {
 
 
             isCheck= viewModle.selectedSitting.getSnoozeIson() == 1;
-            Log.i("isCheck", String.valueOf(isCheck));
             aSwitch.setChecked(isCheck);
             if(aSwitch.isChecked()) {
                 relativeLayout.setAlpha(1f);

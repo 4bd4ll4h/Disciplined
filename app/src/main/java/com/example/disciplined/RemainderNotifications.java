@@ -4,7 +4,12 @@ import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
 import android.os.Build;
+import android.support.v4.media.AudioAttributesCompat;
+
+import java.net.URI;
 
 public class RemainderNotifications extends Application {
     public static final String RemainderChannle="remainderChannle";
@@ -25,6 +30,11 @@ public class RemainderNotifications extends Application {
                     , NotificationManager.IMPORTANCE_HIGH
             );
             remainderChannle.setDescription("This channel showed the Important remainders notifications");
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build();
+            remainderChannle.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),audioAttributes);
             NotificationManager manager=getSystemService(NotificationManager.class);
             NotificationChannel remainderChannleLow=new NotificationChannel(
                     RemainderChannleLow

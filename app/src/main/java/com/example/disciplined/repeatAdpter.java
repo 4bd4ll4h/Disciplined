@@ -51,8 +51,6 @@ public class repeatAdpter extends PagerAdapter {
             days[5]=c.getString(R.string.Thursday);
         }
         view=inflater.inflate(R.layout.activity_repeat__dialog,container,false);
-       if(view==null) Log.i("stage no:","null"+p);
-       else Log.i("stage no:",days[1]);
 
         arrayAdapter=new ArrayAdapter<>(c,android.R.layout.simple_list_item_multiple_choice,days);
         repeatList=view.findViewById(R.id.repeatList);
@@ -97,7 +95,6 @@ public class repeatAdpter extends PagerAdapter {
                             weekend = weekend+","+String.valueOf(arrayAdapter.getItem((int) arry3[n]));
                     }
                 }
-                Log.i("aaaav",weekend+work);
             }
         });
 

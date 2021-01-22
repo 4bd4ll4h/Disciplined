@@ -58,7 +58,6 @@ public class viewModle extends AndroidViewModel {
                         lastD++;
                         lastT++;
                     } else {
-                        Log.i("checkTreue", "true");
                         refresdhedList.add(last, list.get(i));
                         lastD++;
                         lastT++;

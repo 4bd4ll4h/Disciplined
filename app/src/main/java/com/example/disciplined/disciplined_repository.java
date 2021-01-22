@@ -66,11 +66,9 @@ public class disciplined_repository {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        Log.i("asyncTaskListOut", "size" + list.size());
 
         if (getSit.isCancelled()) {
             getSit.execute();
-            Log.i("asyncTaskListOutRE9999", "size" + list.size());
             return getSit.getList();
         } else
 

@@ -13,12 +13,12 @@
     <string name="mm_hh">MM:HH</string>
     <string name="importance_from_1_to_10">importance from 1 to 10</string>
     <string name="repeat_every">Repeat every…</string>
-    <string name="add_a_remainder">Add a Reminder :)</string>
+    <string name="add_a_remainder">Add Reminder :)</string>
     <string name="more_detiles">More Detiles…</string>
     <string name="_00_00">00:00</string>
     <string name="save">Save</string>
     <string name="no_remainder_set_yet">No Reminder set yet :(</string>
-    <string name="add_a_alert">Add a Alarm :)</string>
+    <string name="add_a_alert">Add Alarm :)</string>
     <string name="none">None</string>
     <string name="sound_and_volume">Sound and Volume</string>
     <string name="vibration">Vibration</string>

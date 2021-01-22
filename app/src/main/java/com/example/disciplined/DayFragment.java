@@ -54,7 +54,6 @@ public class DayFragment extends android.support.v4.app.Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_day, container, false);
         theDay = getArguments().getString("theDay");
-        Log.i("theDay", theDay);
         viewModle = ViewModelProviders.of(this).get(com.example.disciplined.viewModle.class);
         viewModle.setAllTask(new Date(theDay),
                 new SimpleDateFormat("EEEE", Locale.ENGLISH).format(new Date(theDay)), SORT);
@@ -117,15 +116,12 @@ public class DayFragment extends android.support.v4.app.Fragment {
 
                 Intent i = new Intent(getContext(), NewTask.class);
                 i.putExtra("id", viewModle.allTask.get(task).getTask().getId());
-                Log.i("azsx", viewModle.allTask.get(task).getTask().getId() + "+" + task);
 
                 startActivity(i);
 
             }
         }, theDay);
         taskList.setAdapter(taskAdapter);
-
-        Log.i("azsx", SORT);
 
         taskAdapter.submitList1(viewModle.getAllTask());
         taskAdapter.notifyDataSetChanged();
@@ -186,7 +182,6 @@ public class DayFragment extends android.support.v4.app.Fragment {
         if (lastPosition != -1)
             updateArray(lastPosition, lastVeiw);
         if ((lastPosition != position) || (!isOpen)) {
-            Log.i("azsx", "Item: " + position);
             view.findViewById(R.id.divider2).setVisibility(View.VISIBLE);
             view.findViewById(R.id.item).setAlpha(1f);
             TextView note = view.findViewById(R.id.NoteDE);
@@ -226,11 +221,10 @@ public class DayFragment extends android.support.v4.app.Fragment {
         if (index != -1) {
             vie = lastVeiw;
             if (vie == null) {
-                Log.i("azsx", "NULL: " + index);
                 return;
             } else {
                 if (vie.findViewById(R.id.detaile).getVisibility() == View.VISIBLE) {
-                    Log.i("azsx", "NOT NULL: " + index);
+
                     vie.findViewById(R.id.divider2).setVisibility(View.GONE);
                     TextView note = vie.findViewById(R.id.NoteDE);
                     note.setVisibility(View.GONE);

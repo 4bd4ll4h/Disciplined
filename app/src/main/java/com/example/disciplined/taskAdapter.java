@@ -47,6 +47,7 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
         public boolean areContentsTheSame(insertTask oldItem, insertTask newItem) {
             return false;
 
+            // due to some bugs we cancel this check but you free to modify
             /*
                     oldItem.getTask().getId().equals(newItem.getTask().getId()) &&
                     oldItem.getTask().getDate().toString().equals(newItem.getTask().getDate().toString()) &&
@@ -75,7 +76,6 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
         this.taskFace = taskFace;
         this.context = context;
         this.theDay = theDay;
-        Log.i("safsda2", getItemCount() + "i");
     }
 
     @NonNull
@@ -89,7 +89,6 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
 
     @Override
     public void onBindViewHolder(@NonNull final taskHolder holder, @SuppressLint("RecyclerView") final int position) {
-        Log.i("safsdaf", getItemCount() + "i");
         holder.setIsRecyclable(false);
         task = getItem(position).getTask();
         task1 = getItem(position);
@@ -105,7 +104,6 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
             holder.getCountDownTimer().cancel();
             holder.setCountDownTimer(null);
             holder.time.setText(NewTask.changeTimeFormat(task.getDate().getHours(), task.getDate().getMinutes(), context));
-            Log.i("safsd13", task.getTitle() + "nul");
         }
 
 
@@ -116,7 +114,6 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
                 (new Date().getYear() == new Date(theDay).getYear() &&
                         new Date().getMonth() == new Date(theDay).getMonth() &&
                         new Date().getDate() == new Date(theDay).getDate())) {
-            Log.i("safsd13", task.getTitle() + "in"+"  "+holder.getAdapterPosition()+position);
             final int[] CH = new int[1];
             final int[] Cm = new int[1];
             final int[] Csecand = new int[1];
@@ -152,7 +149,6 @@ public class taskAdapter extends ListAdapter<insertTask, taskAdapter.taskHolder>
             d2 += String.valueOf(date2.getMonth());
             d1 += String.valueOf(date1.getDate());
             d2 += String.valueOf(date2.getDate());
-            Log.i("theDay2", d1 + " : " + d2);
             if (task.getStatus() != 1 && (Integer.valueOf(d1) > Integer.valueOf(d2) || (d1.equals(d2) && sec < 0))) {
                 holder.item.setAlpha(0.5f);
                 holder.time.setText(R.string.time_is_up);

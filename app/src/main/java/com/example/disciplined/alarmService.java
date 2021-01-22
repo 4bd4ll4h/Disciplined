@@ -39,7 +39,7 @@ import static com.example.disciplined.MainActivity.setAlarmList;
 import static com.example.disciplined.MainActivity.setDBalarm;
 import static com.example.disciplined.MainActivity.snoozeList;
 
-public class alarmReceiver extends IntentService {
+public class alarmService extends IntentService {
     private View unlockView;
     private WindowManager wm;
     private TextView clock, title, details;
@@ -52,7 +52,7 @@ public class alarmReceiver extends IntentService {
     Context context = this;
 
 
-    public alarmReceiver() {
+    public alarmService() {
         super("alarmReceiver");
     }
 
@@ -60,18 +60,8 @@ public class alarmReceiver extends IntentService {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         currentIndex = intent.getIntExtra("ID", 0);
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,
-                0, notificationIntent, 0);
-        Notification notification = new NotificationCompat.Builder(this,RemainderNotifications.AlarmChannle )
-                .setContentTitle("Alarms Are  ")
-                .setContentText("")
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentIntent(pendingIntent)
-                .build();
-        startForeground(1, notification);
 
-        return START_NOT_STICKY;
+        return START_STICKY;
 
     }
 

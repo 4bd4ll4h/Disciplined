@@ -43,14 +43,14 @@ public class repeatDialog extends DialogFragment {
         viewPager.setAdapter(repeatAdpter);
         tabLayout = view.findViewById(R.id.dayBar);
         tabLayout.setupWithViewPager(viewPager);
-        repeatBuilder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+        repeatBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 postive.click();
 
             }
         });
-        repeatBuilder.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
+        repeatBuilder.setNegativeButton(R.string.Cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 

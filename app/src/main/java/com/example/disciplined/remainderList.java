@@ -19,18 +19,24 @@ import static com.example.disciplined.RemainderNotifications.RemainderChannleLow
 
 public class remainderList  extends IntentService {
 
+    int currentIndex = 0;
 
 
     public remainderList() {
-        super("nam3e");
+        super("remainderList");
     }
 
     @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        currentIndex = intent.getIntExtra("ID", 0);
+        return START_STICKY;
+    }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
         setDbReminder(getApplication());
         disciplined_repository repository=new disciplined_repository((getApplication()));
-        int currentIndex=intent.getIntExtra("ID",-1);
         NotificationManagerCompat managerCompat=NotificationManagerCompat.from(getApplicationContext());
         Intent mainActivty=new Intent(getApplicationContext(),MainActivity.class);
         PendingIntent mainAc=PendingIntent.getActivity(getApplicationContext(),0,mainActivty,0);
@@ -58,5 +64,10 @@ public class remainderList  extends IntentService {
         managerCompat.notify(Integer.valueOf(String.valueOf( remainderOfDay.get(currentIndex).getTaskId())),notification);
         remainderOfDay.remove(currentIndex);
         setRemainderOfDay( getApplication());
+    }
+
+    @Override
+    protected void onHandleIntent(@Nullable Intent intent) {
+
     }
 }

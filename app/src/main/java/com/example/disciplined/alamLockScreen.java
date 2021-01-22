@@ -1,6 +1,5 @@
 package com.example.disciplined;
 
-import android.app.Application;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -26,7 +25,7 @@ import static com.example.disciplined.MainActivity.alarmList;
 import static com.example.disciplined.MainActivity.setAlarmList;
 import static com.example.disciplined.MainActivity.setDBalarm;
 import static com.example.disciplined.MainActivity.snoozeList;
-import static com.example.disciplined.alarmReceiver.mediaPlayer;
+import static com.example.disciplined.alarmService.mediaPlayer;
 
 public class alamLockScreen extends AppCompatActivity {
     private TextView clock, title, details;
